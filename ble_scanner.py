@@ -63,9 +63,8 @@ async def get_device_info(address: str):
                     print("✓ Successfully connected!")
                     
                     print("\n=== SERVICES AND CHARACTERISTICS ===")
-                    services = await client.get_services()
                     
-                    for service in services.services.values():
+                    for service in client.services:
                         print(f"\nService: {service.uuid}")
                         print(f"  Description: {service.description}")
                         
@@ -88,7 +87,7 @@ async def get_device_info(address: str):
         print(f"Error getting device information: {e}")
 
 
-async def scan_ble_devices(scan_time: int = 5):
+async def scan_ble_devices(scan_time: int = 5, dbm_max: int = -80):
     """Scan for BLE devices and display basic information"""
     print(f"Starting BLE scan for {scan_time} seconds...")
     
@@ -120,6 +119,9 @@ async def scan_ble_devices(scan_time: int = 5):
         device_name = info['name']
         rssi = info['rssi']
         ad_data = info['advertisement_data']
+
+        if rssi <= dbm_max:
+            continue  # Skip devices with weak signal strength
         
         print(f"Name: {device_name}")
         print(f"Address: {address}")
@@ -165,6 +167,12 @@ Examples:
         type=int,
         default=5,
         help='Time in seconds to scan for devices (default: 5)'
+    )
+    group.add_argument(
+        '--dbm-max', '-d',
+        type=int,
+        default=-80,
+        help='Filter out devices with weak signal strength'
     )
     
     args = parser.parse_args()
