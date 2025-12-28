@@ -113,15 +113,19 @@ async def scan_ble_devices(scan_time: int = 5, dbm_max: int = -80):
         print("No BLE devices found.")
         return
     
-    print(f"\nFound {len(discovered_devices)} device(s):")
+    # Filter devices by RSSI
+    filtered_devices = {addr: info for addr, info in discovered_devices.items() if info['rssi'] > dbm_max}
+    
+    if not filtered_devices:
+        print(f"No BLE devices found with RSSI > {dbm_max} dBm (found {len(discovered_devices)} total, all filtered out).")
+        return
+    
+    print(f"\nFound {len(filtered_devices)} device(s):")
     print("-" * 80)
-    for address, info in discovered_devices.items():
+    for address, info in filtered_devices.items():
         device_name = info['name']
         rssi = info['rssi']
         ad_data = info['advertisement_data']
-
-        if rssi <= dbm_max:
-            continue  # Skip devices with weak signal strength
         
         print(f"Name: {device_name}")
         print(f"Address: {address}")
