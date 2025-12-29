@@ -112,7 +112,6 @@ async def scan_ble_devices(scan_time: int = 5, dbm_max: int = -80):
     if not discovered_devices:
         print("No BLE devices found.")
         return
-    
     # Filter devices by RSSI
     filtered_devices = {addr: info for addr, info in discovered_devices.items() if info['rssi'] > dbm_max}
     
@@ -187,7 +186,7 @@ Examples:
             asyncio.run(get_device_info(args.address))
         else:
             # Scan for devices
-            asyncio.run(scan_ble_devices(args.scan_time))
+            asyncio.run(scan_ble_devices(args.scan_time, args.dbm_max))
     except KeyboardInterrupt:
         print("\nScan interrupted by user")
         sys.exit(0)
