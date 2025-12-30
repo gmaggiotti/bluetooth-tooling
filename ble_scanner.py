@@ -90,10 +90,10 @@ async def get_device_info(address: str):
 async def scan_ble_devices(scan_time: int = 5, dbm_max: int = -80):
     """Scan for BLE devices and display basic information"""
     print(f"Starting BLE scan for {scan_time} seconds...")
+    print(f"Filtering devices with RSSI > {dbm_max} dBm")
     
     # Dictionary to store discovered devices with their RSSI
     discovered_devices = {}
-    
     def detection_callback(device, advertisement_data):
         """Callback function to handle detected devices"""
         discovered_devices[device.address] = {
